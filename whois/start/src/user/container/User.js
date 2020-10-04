@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { Row, Col, PageHeader, Descriptions, Typography } from "antd";
+import { Row, Col, PageHeader, Descriptions, Typography, Spin, Space } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import { actions } from "../state";
+import { actions, Types } from "../state";
+import useFetchInfo from "../../common/hook/useFetchInfo";
 /**
  *
  * @param {object} param
@@ -16,9 +17,10 @@ export default function User({ match }) {
   const name = match.params.name;
   useEffect(() => {
     dispatch(actions.fetchUser(name));
-  }, [name]);
+  }, [dispatch, name]);
 
-  const isFetched = true;
+  // const isFetched = true;
+  const { isFetched, isSlow } = useFetchInfo(Types.FetchUser);
 
   return (
     <Row justify="center">
@@ -26,7 +28,12 @@ export default function User({ match }) {
         <PageHeader
           onBack={history.goBack}
           // onBack={() => window.history.back()} 둘의 차이점이 뭘까
-          title="사용자 정보"
+          title={
+            <Space>
+              사용자 정보
+              {isSlow && <Spin size="small"></Spin>}
+            </Space>
+          }
           subTitle="사용자 정보를 확인해봅시다!"
         />
         {user && (
